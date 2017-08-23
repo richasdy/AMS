@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.inventaris.fams.CariDevice"
+    tools:showIn="@layout/activity_cari_device">
+
+    <Button
+        android:id="@+id/btn_turnOn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp"
+        android:text="Turn On Bluetooth"
+        android:textAllCaps="false" />
+
+    <TextView
+        android:id="@+id/txtPaired"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp"
+        android:text="Paired Devices"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+
+    <ListView
+        android:id="@+id/listDevice"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/txtPaired"
+        android:layout_margin="7dp"></ListView>
+
+</RelativeLayout>
