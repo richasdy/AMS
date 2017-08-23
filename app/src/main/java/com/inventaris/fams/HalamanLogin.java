@@ -71,7 +71,7 @@ public class HalamanLogin extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 if (error instanceof NetworkError || error instanceof NoConnectionError || error instanceof TimeoutError) {
-                    Toast.makeText(HalamanLogin.this, "Terjadi kesalah pada koneksi intenrnet anda ! tolong ulangi lagi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HalamanLogin.this, "Terjadi kesalah pada koneksi internet anda ! tolong ulangi lagi", Toast.LENGTH_SHORT).show();
                 }
             }
         }) {
