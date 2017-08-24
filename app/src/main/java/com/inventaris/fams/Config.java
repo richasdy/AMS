@@ -1,5 +1,7 @@
 package com.inventaris.fams;
 
+import java.util.UUID;
+
 /**
  * Created by mwildani on 23/08/2017.
  */
@@ -10,4 +12,5 @@ public class Config {
     public final static String URL_GENERATE_TOKEN = "http://128.199.115.183:8002/oauth/token";
     public final static String GRANT_TYPE = "password";
     public final static String CLIENT_ID = "4";
+    public static final UUID RFIDUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 }
