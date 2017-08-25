@@ -90,7 +90,7 @@ public class CariDevice extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Find Device");
 
-        turnOn.setVisibility(View.VISIBLE);
+        turnOn.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
         textPaired.setVisibility(View.GONE);
         listAvailable.setVisibility(View.GONE);
@@ -131,8 +131,10 @@ public class CariDevice extends AppCompatActivity {
         listAvailable.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(dataDeviceAvailable.get(position).getDeviceHardwareAddress());
-                connectToDevice(device);
+                Intent intent = new Intent(getApplicationContext(), HalamanUtama.class);
+                intent.putExtra("dataDevice", dataDeviceAvailable.get(position));
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -142,8 +144,10 @@ public class CariDevice extends AppCompatActivity {
                 if (mBluetoothAdapter.isDiscovering()) {
                     mBluetoothAdapter.cancelDiscovery();
                 }
-                BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(dataDevice.get(position).getDeviceHardwareAddress());
-                connectToDevice(device);
+                Intent intent = new Intent(getApplicationContext(), HalamanUtama.class);
+                intent.putExtra("dataDevice", dataDevice.get(position));
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -160,26 +164,6 @@ public class CariDevice extends AppCompatActivity {
         }
     }
 
-    private void connectToDevice(BluetoothDevice device) {
-        try {
-            mSocket = createBluetoothSocket(device);
-        } catch (IOException e) {
-            Toast.makeText(getBaseContext(), "Socket creation failed", Toast.LENGTH_LONG).show();
-        }
-        try {
-            mSocket.connect();
-            Toast.makeText(CariDevice.this, "Connected !", Toast.LENGTH_SHORT).show();
-            Prefs.putBoolean("isConnected", true);
-            kembali();
-        } catch (IOException e) {
-            Toast.makeText(CariDevice.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            try {
-                mSocket.close();
-            } catch (IOException e2) {
-                Toast.makeText(CariDevice.this, e2.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
     private void bluetoothState() {
         if (!mBluetoothAdapter.isEnabled()) {
@@ -286,9 +270,16 @@ public class CariDevice extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed()
+    {
+       kembali();
+    }
+
     private void kembali() {
-        this.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
-        this.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
+        Intent intent = new Intent(getApplicationContext(), HalamanUtama.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -319,10 +310,6 @@ public class CariDevice extends AppCompatActivity {
                 }
             }
         }
-    }
-
-    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-        return device.createRfcommSocketToServiceRecord(Config.RFIDUUID);
     }
 
 
