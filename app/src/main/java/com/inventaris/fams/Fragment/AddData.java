@@ -4,25 +4,44 @@ package com.inventaris.fams.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.provider.Telephony;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.inventaris.fams.BuildConfig;
 import com.inventaris.fams.CariDevice;
 import com.inventaris.fams.Config;
+import com.inventaris.fams.FamsModel;
+import com.inventaris.fams.HalamanInputData;
+import com.inventaris.fams.HalamanUtama;
 import com.inventaris.fams.Model.PairedDevice;
 import com.inventaris.fams.R;
 import com.inventaris.fams.Utils.BluetoothConnector;
+import com.inventaris.fams.Utils.ModelBase;
+import com.inventaris.fams.Utils.TSLBluetoothDeviceApplication;
+import com.inventaris.fams.Utils.WeakHandler;
 import com.pixplicity.easyprefs.library.Prefs;
+import com.uk.tsl.rfid.DeviceListActivity;
+import com.uk.tsl.rfid.asciiprotocol.AsciiCommander;
+import com.uk.tsl.rfid.asciiprotocol.responders.LoggerResponder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,12 +63,24 @@ public class AddData extends Fragment {
     BluetoothConnector bluetoothConnector;
     private Handler bluetoothIn;
     private PairedDevice dev;
-    private ConnectedThread mConnectedThread;
+    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
 
     @BindView(R.id.txtStatus)
     TextView status;
     @BindView(R.id.btn_cari)
     Button cari;
+
+    // Debug control
+    private static final boolean D = BuildConfig.DEBUG;
+
+    // The list of results from actions
+    private ArrayAdapter<String> mResultsArrayAdapter;
+    private ListView mResultsListView;
+    private ArrayAdapter<String> mBarcodeResultsArrayAdapter;
+    private ListView mBarcodeResultsListView;
+
+    // All of the reader inventory tasks are handled by this class
+    private FamsModel mModel;
 
     public AddData() {
         // Required empty public constructor
@@ -63,131 +94,173 @@ public class AddData extends Fragment {
         View view = inflater.inflate(R.layout.fragment_add_data, container, false);
         ButterKnife.bind(this, view);
 
-        status.setText("Status : Not Connected !");
-        cari.setText("Find");
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mResultsArrayAdapter = new ArrayAdapter<String>(AddData.this.getContext(), android.R.layout.simple_list_item_1);
+        mBarcodeResultsArrayAdapter = new ArrayAdapter<String>(AddData.this.getContext(), android.R.layout.simple_list_item_1);
 
-        Bundle b = getActivity().getIntent().getExtras();
-        if (b != null) {
-            PairedDevice paireddevice = b.getParcelable("dataDevice");
-            dev = paireddevice;
-            device = mBluetoothAdapter.getRemoteDevice(paireddevice.getDeviceHardwareAddress());
-            connectToDevice(device);
-        }
+        mResultsListView = (ListView) view.findViewById(R.id.resultListView);
+        mResultsListView.setAdapter(mResultsArrayAdapter);
+        mResultsListView.setFastScrollEnabled(true);
+
+        mBarcodeResultsListView = (ListView) view.findViewById(R.id.barcodeListView);
+        mBarcodeResultsListView.setAdapter(mBarcodeResultsArrayAdapter);
+        mBarcodeResultsListView.setFastScrollEnabled(true);
+
+        mModel = ((HalamanUtama) getActivity()).getmModel();
+
+        mModel.setHandler(mGenericModelHandler);
+
+        status.setText("Status : Not Connected !");
+        cari.setVisibility(View.GONE);
+
+        mResultsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String epc = mResultsArrayAdapter.getItem(position).substring(5);
+                Intent intent = new Intent(AddData.this.getContext(), HalamanInputData.class)
+                        .putExtra("epcCode", epc);
+                startActivity(intent);
+            }
+        });
 
         return view;
+    }
+
+    private final WeakHandler<AddData> mGenericModelHandler = new WeakHandler<AddData>(this) {
+
+        @Override
+        public void handleMessage(Message msg, AddData thisActivity) {
+            try {
+                switch (msg.what) {
+                    case ModelBase.BUSY_STATE_CHANGED_NOTIFICATION:
+                        //TODO: process change in model busy state
+                        break;
+
+                    case ModelBase.MESSAGE_NOTIFICATION:
+                        // Examine the message for prefix
+                        String message = (String) msg.obj;
+                        if (message.startsWith("ER:")) {
+                            Toast.makeText(AddData.this.getContext(), message.substring(3), Toast.LENGTH_SHORT).show();
+                        } else if (message.startsWith("BC:")) {
+                            mBarcodeResultsArrayAdapter.add(message);
+                            scrollBarcodeListViewToBottom();
+                        } else {
+                            mResultsArrayAdapter.add(message);
+                            scrollResultsListViewToBottom();
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            } catch (Exception e) {
+            }
+
+        }
+    };
+
+    private void scrollResultsListViewToBottom() {
+        mResultsListView.post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the last row so it will scroll into view...
+                mResultsListView.setSelection(mResultsArrayAdapter.getCount() - 1);
+            }
+        });
+    }
+
+    private void scrollBarcodeListViewToBottom() {
+        mBarcodeResultsListView.post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the last row so it will scroll into view...
+                mBarcodeResultsListView.setSelection(mBarcodeResultsArrayAdapter.getCount() - 1);
+            }
+        });
+    }
+
+    private BroadcastReceiver mCommanderMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (D) {
+                Log.d(getClass().getName(), "AsciiCommander state changed - isConnected: " + ((HalamanUtama) getActivity()).getCommander().isConnected());
+            }
+
+            String connectionStateMsg = intent.getStringExtra(AsciiCommander.REASON_KEY);
+            Toast.makeText(context, connectionStateMsg, Toast.LENGTH_SHORT).show();
+
+            displayReaderState();
+            if (((HalamanUtama) getActivity()).getCommander().isConnected()) {
+//                // Update for any change in power limits
+//                setPowerBarLimits();
+//                // This may have changed the current power level setting if the new range is smaller than the old range
+//                // so update the model's inventory command for the new power value
+//                mModel.getCommand().setOutputPower(mPowerLevel);
+
+                mModel.resetDevice();
+                mModel.updateConfiguration();
+            }
+        }
+    };
+
+    private void displayReaderState() {
+
+        String connectionMsg = "Reader ";
+        switch (((HalamanUtama) getActivity()).getCommander().getConnectionState()) {
+            case CONNECTED:
+                cari.setVisibility(View.VISIBLE);
+                cari.setText("Scan");
+                connectionMsg += ((HalamanUtama) getActivity()).getCommander().getConnectedDeviceName();
+                break;
+            case CONNECTING:
+                cari.setVisibility(View.GONE);
+                connectionMsg += "Connecting...";
+                break;
+            default:
+                connectionMsg += "Disconnected";
+                cari.setVisibility(View.GONE);
+        }
+        status.setText("Status : " + connectionMsg);
     }
 
     @OnClick(R.id.btn_cari)
     void cari() {
         if (cari.getText().toString().equals("Scan")) {
             Log.i("scan", "scan");
-            mConnectedThread.write(".iv" + "\r\n");
+            mModel.scan();
         } else {
-            startActivity(new Intent(AddData.this.getContext(), CariDevice.class));
-            getActivity().finish();
+            ((HalamanUtama) getActivity()).finDevice();
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        status.setText("Status : Not Connected !");
-        Bundle b = getActivity().getIntent().getExtras();
-        if (b != null) {
-            PairedDevice paireddevice = b.getParcelable("dataDevice");
-            dev.getDeviceName();
-            device = mBluetoothAdapter.getRemoteDevice(paireddevice.getDeviceHardwareAddress());
-            connectToDevice(device);
-        }
+        mModel.setEnabled(true);
+
+        // Register to receive notifications from the AsciiCommander
+        LocalBroadcastManager.getInstance(AddData.this.getContext()).registerReceiver(mCommanderMessageReceiver,
+                new IntentFilter(AsciiCommander.STATE_CHANGED_NOTIFICATION));
+
+        displayReaderState();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mModel.setEnabled(false);
+
+        // Unregister to receive notifications from the AsciiCommander
+        LocalBroadcastManager.getInstance(AddData.this.getContext()).unregisterReceiver(mCommanderMessageReceiver);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        try {
-            if (mSocket != null) {
-                mSocket.close();
-            }
-        } catch (IOException e) {
-            Toast.makeText(AddData.this.getContext(), "Failed to close Socket because " +
-                    e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
+        mModel.setEnabled(false);
 
-    private void connectToDevice(BluetoothDevice device) {
-        bluetoothConnector = new BluetoothConnector(device, true, mBluetoothAdapter, null);
-        try {
-            mSocket = bluetoothConnector.connect();
-            mConnectedThread = new ConnectedThread(mSocket);
-            mConnectedThread.start();
-            status.setText("Status : connected to " + mSocket.getRemoteDeviceName());
-            cari.setText("Scan");
-            bluetoothIn = new Handler() {
-                public void handleMessage(android.os.Message msg) {
-                    if (msg.what == handlerState) {                                        //if message is what we want
-                        String readMessage = (String) msg.obj;                                                                // msg.arg1 = bytes from connect thread
-                        //keep appending to string until ~
-                        Log.i("response", readMessage);
-                        Toast.makeText(AddData.this.getContext(), readMessage + "\r\n", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            };
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Unregister to receive notifications from the AsciiCommander
+        LocalBroadcastManager.getInstance(AddData.this.getContext()).unregisterReceiver(mCommanderMessageReceiver);
     }
 
 
-    //create new class for connect thread
-    private class ConnectedThread extends Thread {
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
-
-        //creation of the connect thread
-        public ConnectedThread(BluetoothConnector.BluetoothSocketWrapper socket) {
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-
-            try {
-                //Create I/O streams for connection
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
-            } catch (IOException e) {
-            }
-
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
-
-
-        public void run() {
-            byte[] buffer = new byte[256];
-            int bytes;
-
-            // Keep looping to listen for received messages
-            while (true) {
-                try {
-                    bytes = mmInStream.read(buffer);            //read bytes from input buffer
-                    String readMessage = new String(buffer, 0, bytes);
-                    // Send the obtained bytes to the UI Activity via handler
-                    bluetoothIn.obtainMessage(handlerState, bytes, -1, readMessage).sendToTarget();
-                } catch (IOException e) {
-                    break;
-                }
-            }
-        }
-
-        //write method
-        public void write(String input) {
-            byte[] msgBuffer = input.getBytes();           //converts entered String into bytes
-            try {
-                mmOutStream.write(msgBuffer);                //write bytes over BT connection via outstream
-            } catch (IOException e) {
-                //if you cannot write, close the application
-                Toast.makeText(AddData.this.getContext(), "Connection Failure", Toast.LENGTH_LONG).show();
-                cari.setText("Find");
-            }
-        }
-    }
 }

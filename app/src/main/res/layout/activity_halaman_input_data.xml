@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ls="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.inventaris.fams.HalamanInputData">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="7dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtEpc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EPC"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <com.farbod.labelledspinner.LabelledSpinner
+            android:id="@+id/spinnerSource"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ls:labelText="Source"
+            ls:widgetColor="@android:color/black" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/edTahun"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/logo"
+            android:hint="Tahun"
+            android:inputType="number"
+            android:textSize="14dp"
+            app:met_baseColor="@android:color/black"
+            app:met_floatingLabel="normal"
+            app:met_floatingLabelTextColor="@android:color/black"
+            app:met_primaryColor="@android:color/black" />
+
+        <com.farbod.labelledspinner.LabelledSpinner
+            android:id="@+id/spinnerLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ls:labelText="Location"
+            ls:widgetColor="@android:color/black" />
+
+        <com.farbod.labelledspinner.LabelledSpinner
+            android:id="@+id/spinnerType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ls:labelText="Type"
+            ls:widgetColor="@android:color/black" />
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</RelativeLayout>

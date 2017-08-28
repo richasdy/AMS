@@ -1,1 +1,3 @@
 include ':app'
+include ':DeviceList'
+include ':Rfid.AsciiProtocol-Library'

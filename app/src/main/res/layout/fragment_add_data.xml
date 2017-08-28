@@ -9,6 +9,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/lin1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="7dp"
@@ -37,8 +38,39 @@
                     android:textAllCaps="false" />
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="1"
+                android:background="#cce"
+                android:text="Transponder"
+                android:textColor="#000" />
 
+            <ListView
+                android:id="@+id/resultListView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="4dp"
+                android:layout_weight="2">
+
+            </ListView>
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#cce"
+                android:text="Barcode"
+                android:textColor="#000" />
+
+            <ListView
+                android:id="@+id/barcodeListView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"></ListView>
         </LinearLayout>
+
 
     </RelativeLayout>
 
