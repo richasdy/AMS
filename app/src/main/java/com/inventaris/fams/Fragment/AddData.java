@@ -115,9 +115,17 @@ public class AddData extends Fragment {
         mResultsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String epc = mResultsArrayAdapter.getItem(position).substring(5);
                 Intent intent = new Intent(AddData.this.getContext(), HalamanInputData.class)
-                        .putExtra("epcCode", epc);
+                        .putExtra("epcCode", mResultsArrayAdapter.getItem(position));
+                startActivity(intent);
+            }
+        });
+
+        mBarcodeResultsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(AddData.this.getContext(), HalamanInputData.class)
+                        .putExtra("epcCode", mBarcodeResultsArrayAdapter.getItem(position));
                 startActivity(intent);
             }
         });
