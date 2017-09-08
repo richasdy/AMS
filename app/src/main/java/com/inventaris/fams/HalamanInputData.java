@@ -91,13 +91,15 @@ public class HalamanInputData extends AppCompatActivity implements LabelledSpinn
         spinnerType.setOnItemChosenListener(this);
 
         Bundle b = getIntent().getExtras();
-        txtepc.setText(b.getString("epcCode"));
-        if (b.getString("epcCode").startsWith("EP")) {
-            jenis = "RFID";
-            kode = b.getString("epcCode").substring(5);
-        } else {
-            jenis = "BC";
-            kode = b.getString("epcCode").substring(4);
+        if (b != null) {
+            txtepc.setText(b.getString("epcCode"));
+            if (b.getString("epcCode").startsWith("EP")) {
+                jenis = "RFID";
+                kode = b.getString("epcCode").substring(5);
+            } else {
+                jenis = "BC";
+                kode = b.getString("epcCode").substring(4);
+            }
         }
 
         getDataLocation();

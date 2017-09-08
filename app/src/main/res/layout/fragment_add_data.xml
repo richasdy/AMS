@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:text="Find"
+                    android:text="Scan"
                     android:textAllCaps="false" />
             </RelativeLayout>
 
