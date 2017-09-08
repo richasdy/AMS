@@ -136,6 +136,8 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
         adapter.addFrag(new ScanData(), "THREE");
 
         refFragmentMap.put(1, new AddData());
+        refFragmentMap.put(2, new SearchData());
+        refFragmentMap.put(3, new ScanData());
 
         viewPager.setAdapter(adapter);
     }
