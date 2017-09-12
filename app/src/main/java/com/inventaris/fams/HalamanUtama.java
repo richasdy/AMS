@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.inventaris.fams.Fragment.AddData;
 import com.inventaris.fams.Fragment.ScanData;
 import com.inventaris.fams.Fragment.SearchData;
@@ -45,6 +46,7 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
     private ViewPager viewPager;
     private FamsModel mModel;
     private boolean isReadderconnected = false;
+    private MaterialDialog dialog;
     String connectionMsg;
     private int[] tabIcons = {
             R.drawable.addnewdata,
@@ -425,11 +427,13 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
 
     private void LogOut() {
         if (isReadderconnected) {
+            showDialog();
             disconnectDevice();
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     Prefs.putString(Config.TOKEN_SHARED_PREF, "null");
+                    dismissDialog();
                     startActivity(new Intent(getApplicationContext(), HalamanLogin.class));
                     finish();
                 }
@@ -439,5 +443,19 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
             startActivity(new Intent(getApplicationContext(), HalamanLogin.class));
             finish();
         }
+    }
+
+    private void showDialog() {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(HalamanUtama.this)
+                .title("Log Out")
+                .progress(true, 0)
+                .content("Please Wait !");
+
+        dialog = builder.build();
+        dialog.show();
+    }
+
+    private void dismissDialog() {
+        dialog.dismiss();
     }
 }
