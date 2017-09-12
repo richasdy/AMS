@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -181,6 +182,10 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
 
             case R.id.reset_reader_menu_item:
                 resetReader();
+                return true;
+
+            case R.id.logout:
+                LogOut();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -416,5 +421,23 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
 
         // Unregister to receive notifications from the AsciiCommander
         LocalBroadcastManager.getInstance(HalamanUtama.this).unregisterReceiver(mCommanderMessageReceiver);
+    }
+
+    private void LogOut() {
+        if (isReadderconnected) {
+            disconnectDevice();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Prefs.putString(Config.TOKEN_SHARED_PREF, "null");
+                    startActivity(new Intent(getApplicationContext(), HalamanLogin.class));
+                    finish();
+                }
+            }, 3000);
+        } else {
+            Prefs.putString(Config.TOKEN_SHARED_PREF, "null");
+            startActivity(new Intent(getApplicationContext(), HalamanLogin.class));
+            finish();
+        }
     }
 }

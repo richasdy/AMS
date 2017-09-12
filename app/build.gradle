@@ -41,6 +41,7 @@ dependencies {
     compile 'com.farbod.labelledspinner:labelledspinner:1.1.5'
     compile 'com.rengwuxian.materialedittext:library:2.0.3'
     compile 'com.afollestad.material-dialogs:commons:0.9.4.5'
+    compile 'com.github.scottyab:showhidepasswordedittext:0.8'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 }

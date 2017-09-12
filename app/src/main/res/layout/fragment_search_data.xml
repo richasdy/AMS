@@ -23,7 +23,7 @@
                 android:layout_height="60dp"
                 android:layout_below="@+id/logo"
                 android:layout_weight="1.03"
-                android:hint="EPC / Barcode"
+                android:hint="Kode"
                 android:textSize="14dp"
                 app:met_baseColor="@android:color/black"
                 app:met_floatingLabel="normal"

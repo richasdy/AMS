@@ -20,5 +20,8 @@
         android:id="@+id/reset_reader_menu_item"
         android:enabled="false"
         android:title="@string/reset_reader_menu_text"></item>
+    <item
+        android:id="@+id/logout"
+        android:title="@string/keluar"></item>
 
 </menu>
