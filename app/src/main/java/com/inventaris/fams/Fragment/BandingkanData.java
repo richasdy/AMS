@@ -147,7 +147,7 @@ public class BandingkanData extends Fragment implements LabelledSpinner.OnItemCh
                                 JSONObject isi = data.getJSONObject(i);
                                 Lokasi lokasi = new Lokasi(isi.getString("id"),
                                         isi.getString("name"), isi.getString("id_gedung"));
-                                dataLokasi.add(lokasi);
+                                addDataLokasi(isi.getString("name"), lokasi);
                             }
                             ArrayList<String> nama = new ArrayList<>();
                             for (Lokasi lokasi : dataLokasi) {
@@ -432,5 +432,22 @@ public class BandingkanData extends Fragment implements LabelledSpinner.OnItemCh
                 listScanner.setSelection(adapter1.getCount() - 1);
             }
         });
+    }
+
+    private void addDataLokasi(String name, Lokasi lokasi) {
+        if (dataLokasi.size() == 0) {
+            dataLokasi.add(lokasi);
+        } else {
+            boolean ada = false;
+            for (Lokasi data1 : dataLokasi) {
+                if (name.equals(data1.getName())) {
+                    ada = true;
+                    break;
+                }
+            }
+            if (!ada) {
+                dataLokasi.add(lokasi);
+            }
+        }
     }
 }

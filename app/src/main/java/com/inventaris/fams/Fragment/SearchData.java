@@ -129,11 +129,12 @@ public class SearchData extends Fragment {
                                 datalokasi = new Lokasi(lokasi.getString("id"), lokasi.getString("name")
                                         , lokasi.getString("id_gedung"));
                                 JSONObject tipeaset = data.getJSONObject("type_detail");
+                                JSONObject tipeGeneral = tipeaset.getJSONObject("type_parent");
                                 dataTipeAset = new TipeAset(tipeaset.getString("id"), tipeaset.getString("name"),
-                                        "");
+                                        tipeGeneral.getString("name"));
                                 tahun.setText("Tahun : " + dataTahun);
                                 lokasii.setText("Lokasi : " + datalokasi.getName());
-                                tipeAset.setText("Tipe : " + dataTipeAset.getName());
+                                tipeAset.setText("Klasifikasi : " + dataTipeAset.getTipegeneral() + ", Nama : " + dataTipeAset.getName());
                                 card.setVisibility(View.VISIBLE);
                                 dismissDialog();
                             } else {
