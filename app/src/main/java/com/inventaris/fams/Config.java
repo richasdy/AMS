@@ -17,6 +17,7 @@ public class Config {
     public static final String URL_GET_LOCATION = URL + "api/index-location";
     public static final String URL_GET_ASSET = URL + "api/index-type-detail";
     public static final String URL_SEARCH_ASSET = URL + "api/search?q=";
+    public static final String URL_GET_KLASIFIKASI = URL + "api/index-type";
 
     public Config() {
     }

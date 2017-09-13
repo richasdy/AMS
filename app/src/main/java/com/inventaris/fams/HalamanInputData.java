@@ -50,6 +50,8 @@ public class HalamanInputData extends AppCompatActivity implements LabelledSpinn
     ArrayList<TipeAset> dataAset = new ArrayList<>();
 
     String asal, lokasi, type, jenis, idLokasi, idTipeAset, kode;
+    int CURRENT_PAGE = 1;
+    int LAST_PAGE = 1;
 
     MaterialDialog dialog;
 
@@ -64,6 +66,8 @@ public class HalamanInputData extends AppCompatActivity implements LabelledSpinn
     @BindView(R.id.edTahun)
     TextView tahun;
 
+    ArrayList<String> nama;
+
     Config config = new Config();
 
     @Override
@@ -74,6 +78,8 @@ public class HalamanInputData extends AppCompatActivity implements LabelledSpinn
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        nama = new ArrayList<>();
 
         new Prefs.Builder()
                 .setContext(this)
@@ -103,7 +109,6 @@ public class HalamanInputData extends AppCompatActivity implements LabelledSpinn
         }
 
         getDataLocation();
-
     }
 
     @OnClick(R.id.btnSubmit)
@@ -174,7 +179,7 @@ public class HalamanInputData extends AppCompatActivity implements LabelledSpinn
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(HalamanInputData.this, "created", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HalamanInputData.this, "Asset successfully created !", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -266,14 +271,16 @@ public class HalamanInputData extends AppCompatActivity implements LabelledSpinn
                     public void onResponse(String response) {
                         try {
                             JSONObject dataJson = new JSONObject(response);
+                            CURRENT_PAGE = dataJson.getInt("current_page");
+                            LAST_PAGE = dataJson.getInt("last_page");
                             JSONArray data = dataJson.getJSONArray("data");
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject isi = data.getJSONObject(i);
                                 TipeAset tipeAset = new TipeAset(isi.getString("id"), isi.getString("name"),
                                         isi.getString("type_general"));
+//                                Toast.makeText(HalamanInputData.this, isi.getString("type_general"), Toast.LENGTH_SHORT).show();
                                 dataAset.add(tipeAset);
                             }
-                            ArrayList<String> nama = new ArrayList<>();
                             for (TipeAset aset : dataAset) {
                                 nama.add(aset.getName());
                             }
@@ -311,6 +318,7 @@ public class HalamanInputData extends AppCompatActivity implements LabelledSpinn
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }
+
 
     private void showDialog() {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(HalamanInputData.this)

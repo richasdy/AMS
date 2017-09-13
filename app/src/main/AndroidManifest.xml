@@ -31,7 +31,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".HalamanInputData"
-            android:label="Input Data"></activity>
+            android:label="Input Data" />
+        <activity android:name=".HalamanEditData"></activity>
     </application>
 
 </manifest>
