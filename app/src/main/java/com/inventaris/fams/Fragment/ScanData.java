@@ -370,8 +370,7 @@ public class ScanData extends Fragment implements LabelledSpinner.OnItemChosenLi
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject dataJson = new JSONObject(response);
-                            JSONArray data = dataJson.getJSONArray("data");
+                            JSONArray data = new JSONArray(response);
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject isi = data.getJSONObject(i);
                                 dataKlasifikasi.add(isi.getString("name"));

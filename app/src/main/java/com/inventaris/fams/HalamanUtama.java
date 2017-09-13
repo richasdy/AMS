@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.inventaris.fams.Fragment.AddData;
+import com.inventaris.fams.Fragment.BandingkanData;
 import com.inventaris.fams.Fragment.ScanData;
 import com.inventaris.fams.Fragment.SearchData;
 import com.inventaris.fams.Utils.ModelBase;
@@ -51,7 +52,8 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
     private int[] tabIcons = {
             R.drawable.addnewdata,
             R.drawable.search,
-            R.drawable.ic_scanner
+            R.drawable.ic_scanner,
+            R.drawable.ic_vision
     };
 
     private HashMap<Integer, Fragment> refFragmentMap = new HashMap<>();
@@ -130,6 +132,7 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+        tabLayout.getTabAt(3).setIcon(tabIcons[3]);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -137,10 +140,12 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
         adapter.addFrag(new AddData(), "ONE");
         adapter.addFrag(new SearchData(), "TWO");
         adapter.addFrag(new ScanData(), "THREE");
+        adapter.addFrag(new BandingkanData(), "FOUR");
 
         refFragmentMap.put(1, new AddData());
         refFragmentMap.put(2, new SearchData());
         refFragmentMap.put(3, new ScanData());
+        refFragmentMap.put(4, new BandingkanData());
 
         viewPager.setAdapter(adapter);
     }
@@ -231,6 +236,10 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
                     Fragment scan = new ScanData();
                     refFragmentMap.put(position, scan);
                     return scan;
+                case 3:
+                    Fragment lihat = new BandingkanData();
+                    refFragmentMap.put(position, lihat);
+                    return lihat;
             }
             return null;
         }
@@ -309,6 +318,8 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
                                 a.addBarcodeData(message);
                             } else if (fragment instanceof ScanData) {
                                 ((ScanData) fragment).onNewData(message);
+                            } else if (fragment instanceof BandingkanData) {
+                                ((BandingkanData) fragment).onNewData(message);
                             }
                         } else if (message.startsWith("EPC")) {
                             int index = viewPager.getCurrentItem();
@@ -319,6 +330,8 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
                                 a.addRFIDData(message);
                             } else if (fragment instanceof ScanData) {
                                 ((ScanData) fragment).onNewData(message);
+                            } else if (fragment instanceof BandingkanData) {
+                                ((BandingkanData) fragment).onNewData(message);
                             }
                         }
                         break;

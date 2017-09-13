@@ -14,10 +14,11 @@ public class Config {
     public final static String GRANT_TYPE = "password";
     public final static String CLIENT_ID = "4";
     public static final UUID RFIDUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    public static final String URL_GET_LOCATION = URL + "api/index-location";
-    public static final String URL_GET_ASSET = URL + "api/index-type-detail";
+    public static final String URL_GET_LOCATION = URL + "api/location";
+    public static final String URL_GET_ASSET = URL + "api/typedetail";
+    public static final String URL_GET_ALL_ASSET = URL + "api/asset";
     public static final String URL_SEARCH_ASSET = URL + "api/search?q=";
-    public static final String URL_GET_KLASIFIKASI = URL + "api/index-type";
+    public static final String URL_GET_KLASIFIKASI = URL + "api/type";
 
     public Config() {
     }

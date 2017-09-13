@@ -90,6 +90,12 @@ public class AdapterScannedCode extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void refreshDataOrigin() {
+        dataCode.clear();
+        dataCodeOrigin.clear();
+        notifyDataSetChanged();
+    }
+
     public void refreshList() {
         dataCode.clear();
         for (ScannedCode dataAsli : dataCodeOrigin) {

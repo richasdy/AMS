@@ -217,8 +217,7 @@ public class HalamanInputData extends AppCompatActivity implements LabelledSpinn
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject dataJson = new JSONObject(response);
-                            JSONArray data = dataJson.getJSONArray("data");
+                            JSONArray data = new JSONArray(response);
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject isi = data.getJSONObject(i);
                                 Lokasi lokasi = new Lokasi(isi.getString("id"),
@@ -270,14 +269,11 @@ public class HalamanInputData extends AppCompatActivity implements LabelledSpinn
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject dataJson = new JSONObject(response);
-                            CURRENT_PAGE = dataJson.getInt("current_page");
-                            LAST_PAGE = dataJson.getInt("last_page");
-                            JSONArray data = dataJson.getJSONArray("data");
+                            JSONArray data = new JSONArray(response);
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject isi = data.getJSONObject(i);
                                 TipeAset tipeAset = new TipeAset(isi.getString("id"), isi.getString("name"),
-                                        isi.getString("type_general"));
+                                        isi.getString("id_asset_type"));
 //                                Toast.makeText(HalamanInputData.this, isi.getString("type_general"), Toast.LENGTH_SHORT).show();
                                 dataAset.add(tipeAset);
                             }
