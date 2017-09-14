@@ -58,6 +58,8 @@ public class BandingkanData extends Fragment implements LabelledSpinner.OnItemCh
     TextView totalMaster;
     @BindView(R.id.txtTotalScanData)
     TextView totalScan;
+    @BindView(R.id.layoutData)
+    View layoutData;
 
     String lokasi = "";
     String idLokasi = "";
@@ -84,6 +86,8 @@ public class BandingkanData extends Fragment implements LabelledSpinner.OnItemCh
         listMaster.setAdapter(adapter);
         listScanner.setAdapter(adapter1);
 
+        layoutData.setVisibility(View.GONE);
+
         spinnerLokasi.setOnItemChosenListener(this);
         getDataLocation();
 
@@ -95,6 +99,7 @@ public class BandingkanData extends Fragment implements LabelledSpinner.OnItemCh
         if (!lokasi.equals("")) {
             adapter.refreshDataOrigin();
             ambilDataMasterbyLokasi();
+            layoutData.setVisibility(View.VISIBLE);
         } else {
             Toast.makeText(BandingkanData.this.getContext(), "Tolong pilih Lokasi dahulu !", Toast.LENGTH_SHORT).show();
         }
@@ -377,6 +382,7 @@ public class BandingkanData extends Fragment implements LabelledSpinner.OnItemCh
     }
 
     public void onNewData(String kode) {
+        layoutData.setVisibility(View.VISIBLE);
         cariData(kode);
     }
 

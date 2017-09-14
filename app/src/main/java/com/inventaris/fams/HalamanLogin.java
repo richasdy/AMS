@@ -79,6 +79,7 @@ public class HalamanLogin extends AppCompatActivity {
 //                            Toast.makeText(HalamanLogin.this, token, Toast.LENGTH_SHORT).show();
                                 Prefs.putString(Config.TOKEN_SHARED_PREF, token);
                                 dismissDialog();
+                                Prefs.putString("username", username);
                                 startActivity(new Intent(getApplicationContext(), HalamanUtama.class));
                                 finish();
                             } catch (Exception e) {

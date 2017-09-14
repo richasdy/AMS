@@ -37,6 +37,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/layoutData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/lay1"
@@ -53,7 +54,7 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:background="#cce"
-                    android:text="Master Data"
+                    android:text="Aset Tercatat"
                     android:textColor="#000" />
 
                 <TextView
@@ -85,7 +86,7 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:background="#cce"
-                    android:text="Data From Scanner"
+                    android:text="Aset Terdeteksi"
                     android:textColor="#000" />
 
                 <TextView

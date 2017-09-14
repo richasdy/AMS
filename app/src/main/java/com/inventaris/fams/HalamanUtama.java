@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -40,6 +41,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class HalamanUtama extends TSLBluetoothDeviceActivity {
     private String stat;
     private BluetoothAdapter mBluetoothAdapter;
@@ -55,6 +59,8 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
             R.drawable.ic_scanner,
             R.drawable.ic_vision
     };
+    @BindView(R.id.txtuser)
+    TextView username;
 
     private HashMap<Integer, Fragment> refFragmentMap = new HashMap<>();
 
@@ -76,6 +82,8 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_halaman_utama);
 
+        ButterKnife.bind(this);
+
         //initialize shared pref
         new Prefs.Builder()
                 .setContext(this)
@@ -89,6 +97,8 @@ public class HalamanUtama extends TSLBluetoothDeviceActivity {
         if (stat.equals("null")) {
             startActivity(new Intent(getApplicationContext(), HalamanLogin.class));
             finish();
+        } else {
+            username.setText("Logged in as " + Prefs.getString("username", ""));
         }
 
 

@@ -373,7 +373,7 @@ public class ScanData extends Fragment implements LabelledSpinner.OnItemChosenLi
                             JSONArray data = new JSONArray(response);
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject isi = data.getJSONObject(i);
-                                dataKlasifikasi.add(isi.getString("name"));
+                                addDataKlasifikasi(isi.getString("name"));
                             }
                             spinnerKategori.setItemsArray(dataKlasifikasi);
                             dismissDialog();
@@ -408,5 +408,22 @@ public class ScanData extends Fragment implements LabelledSpinner.OnItemChosenLi
 
         RequestQueue requestQueue = Volley.newRequestQueue(ScanData.this.getContext());
         requestQueue.add(stringRequest);
+    }
+
+    private void addDataKlasifikasi(String nama) {
+        if (dataKlasifikasi.size() == 0) {
+            dataKlasifikasi.add(nama);
+        } else {
+            boolean ada = false;
+            for (int i = 0; i < dataKlasifikasi.size(); i++) {
+                if (dataKlasifikasi.get(i).equals(nama)) {
+                    ada = true;
+                    break;
+                }
+            }
+            if (!ada) {
+                dataKlasifikasi.add(nama);
+            }
+        }
     }
 }
